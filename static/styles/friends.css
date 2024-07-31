@@ -1,0 +1,139 @@
+@import url('/static/styles/main.css');
+
+.getcoins_banner__img {
+    max-width: 100vw;
+    width: 100vw;
+    min-height: 55px;
+    margin-bottom: 21px;
+}
+.heading {
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.friends_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    margin-bottom: 20px;
+}
+
+.friends {
+    width: 178px;
+    height: 178px;
+}
+
+.friends_section {
+    display: flex;
+    flex-direction: column;
+
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    gap: 20px;
+}
+
+.invite_friends_container {
+    position: fixed;
+    left: 0;
+    bottom: 97px;
+    background-color: #000000;
+    width: 100%;
+    border: 1px solid #000000;
+}
+
+.invite_friends_button {
+    font-family: "Poppins", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #000;
+
+    background-color: #fff;
+    border-radius: 12px;
+
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+
+    width: 100%;
+}
+
+.invite_friends_button:hover {
+    background-color: #f2f2f2;
+}
+
+.invite_friends_modal_link_heading {
+    font-family: "Poppins", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+
+    margin-bottom: 19px;
+}
+
+.close_trigger {
+    position: absolute;
+    top: 15px;
+    right: 21px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+}
+
+/* General styles */
+.modal_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10000;
+}
+
+.modal_overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.invite_friends_modal_link_container {
+    position: fixed;
+    left: 0;
+    bottom: -100%;
+    z-index: 10001;
+    width: 100%;
+    background-color: #1C1C1E;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    transition: bottom 0.3s ease;
+}
+
+.invite_friends_modal_link_container.show {
+    bottom: 0;
+}
+
+.relative_container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding-top: 14px;
+    padding-bottom: 23px;
+}

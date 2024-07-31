@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/homepage.css') }}">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <script>
+      const tele = window.Telegram.WebApp;
+      tele.expand();
+    </script>
+
+    <div class="content">
+      <a href="#" class="claim_banner__link" id="claim_banner_link">
+        <img src="/static/img/claim_banner.jpg" alt="" class="claim_banner__img">
+      </a>
+
+      <div class="current_coins">
+        <h1 class="coins">{{ user.coins }}</h1>
+        <h2 class="coins_subtitle">RANDOMCOINS</h2>
+      </div>
+
+      <div class="container">
+        <button class="connect_wallet">Connect wallet</button>
+
+        <div class="community__block">
+          <div class="texts">
+            <h1 class="community_title">RandomCoin Community</h1>
+            <a href="https://t.me/randomcoingame" class="join_button">Join</a>
+          </div>
+
+          <img src="/static/img/telegram_artwork.svg" alt="telegram artwork" class="telegram_logo">
+        </div>
+
+        <div class="rewards__block">
+          <h2 class="rewards_title">Your rewards</h2>
+
+          <div class="rewards">
+            {% for transaction in transactions %}
+                <div class="reward">
+                    <div class="reward_meta">
+                        {% if transaction.type != "Invited Friends" %}
+                            <img src="/static/icons/daily_reward.svg" alt="daily reward" class="reward__icon">
+                        {% else %}
+                            <img src="/static/icons/invited_friends_reward.svg" alt="invited friends reward" class="reward__icon">
+                        {% endif %}
+                        <span class="reward_title">{{ transaction.type }}</span>
+                    </div>
+
+                    <span class="reward_amount" data-amount="{{ transaction.amount }}">+{{ transaction.amount }} RandomCoins</span>
+                </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="userInfo" data-user-id="{{ user.id }}"></div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+      <div class="modal-content">
+        <p>Daily reward claimed successfully!</p>
+        <span class="close" id="successModalClose">
+          <img src="/static/icons/close.svg" alt="close" class="close_icon">
+        </span>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal">
+      <div class="modal-content">
+        <p>You cannot claim the daily reward yet.</p>
+        <span class="close" id="errorModalClose">
+          <img src="/static/icons/close.svg" alt="close" class="close_icon">
+        </span>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM fully loaded and parsed.");
+            function formatCoins(amount) {
+                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            document.querySelectorAll('.reward_amount').forEach(function(element) {
+                const rawAmount = parseInt(element.getAttribute('data-amount'), 10);
+                if (!isNaN(rawAmount)) {
+                    const formattedAmount = formatCoins(rawAmount);
+                    element.innerHTML = `+${formattedAmount} RandomCoins`;
+                } else {
+                    element.innerHTML = '+N/A RandomCoins';
+                }
+            });
+
+
+        function updateUserProfile(newAmount, transactionAmount) {
+          // Обновление количества монет
+          const coinElement = document.querySelector('.coins');
+          if (coinElement) {
+            coinElement.textContent = newAmount;  // Предполагается, что formatCoins - это функция для форматирования чисел
+          }
+
+          // Добавление новой транзакции на страницу
+          const rewardsBlock = document.querySelector('.rewards');
+          if (rewardsBlock) {
+            const reward = document.createElement('div');
+            reward.className = 'reward';
+
+            const rewardMeta = document.createElement('div');
+            rewardMeta.className = 'reward_meta';
+
+            const icon = document.createElement('img');
+            icon.src = '/static/icons/daily_reward.svg';  // Иконка для ежедневной награды
+            icon.alt = 'daily reward';
+            icon.className = 'reward__icon';
+
+            const rewardTitle = document.createElement('span');
+            rewardTitle.className = 'reward_title';
+            rewardTitle.textContent = 'Daily Reward';
+
+            rewardMeta.appendChild(icon);
+            rewardMeta.appendChild(rewardTitle);
+
+            const rewardAmount = document.createElement('span');
+            rewardAmount.className = 'reward_amount';
+            rewardAmount.textContent = `+${transactionAmount} RandomCoins`;
+
+            reward.appendChild(rewardMeta);
+            reward.appendChild(rewardAmount);
+
+            rewardsBlock.prepend(reward);  // Добавить новую транзакцию в начало списка
+          }
+        }
+
+        // Fetch user_id from data attribute
+        const userInfoElement = document.getElementById('userInfo');
+        const userId = userInfoElement ? userInfoElement.dataset.userId : null;
+        console.log("User ID:", userId);
+
+        const claimBannerLink = document.getElementById('claim_banner_link');
+        if (claimBannerLink) {
+          claimBannerLink.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            fetch(`/claim_daily_reward?user_id=${userId}`)  // Pass user_id as a query parameter
+              .then(response => response.json())
+              .then(data => {
+                console.log("Fetch response data:", data);
+                if (data.success) {
+                  updateUserProfile(data.coins, data.new_amount);
+                  showModal('successModal');
+                } else {
+                  showModal('errorModal');
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                showModal('errorModal');
+              });
+          });
+        } else {
+          console.error("Claim banner link not found.");
+        }
+
+        function showModal(modalId) {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.style.display = 'block';
+          } else {
+            console.error("Modal with ID", modalId, "not found.");
+          }
+        }
+
+        function closeModal(modalId) {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.style.display = 'none';
+          } else {
+            console.error("Modal with ID", modalId, "not found.");
+          }
+        }
+
+        const successModalClose = document.getElementById('successModalClose');
+        if (successModalClose) {
+          successModalClose.addEventListener('click', function() {
+            closeModal('successModal');
+          });
+        } else {
+          console.error("Success modal close button not found.");
+        }
+
+        const errorModalClose = document.getElementById('errorModalClose');
+        if (errorModalClose) {
+          errorModalClose.addEventListener('click', function() {
+            closeModal('errorModal');
+          });
+        } else {
+          console.error("Error modal close button not found.");
+        }
+
+        window.onclick = function(event) {
+          if (event.target.className === 'modal') {
+            closeModal('successModal');
+            closeModal('errorModal');
+          }
+        }
+      });
+    </script>
+
+    {% include 'components/navbar.html' %}
+  </body>
+</html>

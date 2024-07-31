@@ -1,0 +1,83 @@
+@import url('/static/styles/main.css');
+
+.content {
+    padding-bottom: 175px;
+}
+.labdeboard_banner__img {
+    max-width: 100vw;
+    width: 100vw;
+    min-height: 55px;
+    margin-bottom: 21px;
+}
+.user_place_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 16px 18px;
+
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+
+    margin-bottom: 31px;
+}
+
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.leaderboard_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user_info_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 13px;
+}
+
+.user_info_container_avatar {
+    display: flex;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user_info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.user_info_username {
+    font-size: 15px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+}
+
+.user_info_points {
+    font-size: 15px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    color: #9E9E9E;
+}
+
+.total_holders_count {
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+
+    margin-bottom: 15px;
+}

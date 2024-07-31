@@ -1,0 +1,17 @@
+<!-- components/navbar.html -->
+<div class="navbar">
+  <a href="/user?id={{ user.id }}" class="item {% if active_tab == 'home' %}active{% endif %}">
+    <img src="/static/icons/home-{% if active_tab == 'home' %}active{% else %}disactive{% endif %}.svg" alt="home" class="icon" width="24">
+    <span class="title">Home</span>
+  </a>
+
+  <a href="/leaderboard?id={{ user.id }}" class="item {% if active_tab == 'leaderboard' %}active{% endif %}">
+    <img src="/static/icons/leaderboard-{% if active_tab == 'leaderboard' %}active{% else %}disactive{% endif %}.svg" alt="leaderboard" class="icon" width="29">
+    <span class="title">Leaderboard</span>
+  </a>
+
+  <a href="/friends?id={{ user.id }}" class="item {% if active_tab == 'friends' %}active{% endif %}">
+    <img src="/static/icons/friends-{% if active_tab == 'friends' %}active{% else %}disactive{% endif %}.svg" alt="friends" class="icon" width="27">
+    <span class="title">Friends</span>
+  </a>
+</div>

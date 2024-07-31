@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Friends</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/friends.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/leaderboard.css') }}">
+</head>
+<body>
+    <div class="content">
+        <div href="#" class="getcoins_banner__block" id="getcoins_banner__block">
+            <img src="/static/img/getcoins_banner.jpg" alt="" class="getcoins_banner__img">
+        </div>
+        <div class="container">
+            <h1 class="heading">Invite friends <br> and get more COIS</h1>
+
+            <div class="friends_container">
+                <img src="/static/img/friends.svg" alt="friends" class="friends">
+            </div>
+
+            <div class="friends_section">
+                <h3 class="friends_count" data-amount="{{ friends_count }}">{{ friends_count }} friends</h3>
+
+                <div class="leaderboard">
+                    {% for user in friends %}
+                        <div class="user_info_container">
+                            <img src="{{ user.photo_url }}" alt="avatar" class="user_info_container_avatar">
+                            <div class="user_info">
+                                <span class="user_info_username">{{ user.username }}</span>
+                                <span class="user_info_points" data-amount="{{ user.coins }}">+{{ user.coins }} RandomCoins</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="invite_friends_container">
+        <div class="container">
+            <button class="invite_friends_button" id="inviteButton">Invite friends</button>
+        </div>
+    </div>
+
+    <div class="modal_overlay" id="modalOverlay"></div>
+
+    <div class="invite_friends_modal_link_container" id="inviteModal">
+        <div class="relative_container">
+            <div class="container">
+                <h2 class="invite_friends_modal_link_heading">Invite friends</h2>
+                <img src="/static/icons/close_gray.svg" alt="close gray" class="close_trigger" id="closeModal">
+
+                <div class="buttons">
+                    <button class="invite_friends_button copy-link-button" data-user-id="{{ user.id }}">Copy invite link</button>
+                    <button class="invite_friends_button" id="shareButton">Share invite link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/navbar.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            function formatCoins(amount) {
+                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            document.querySelectorAll('.friends_count').forEach(function(element) {
+                const rawAmount = parseInt(element.getAttribute('data-amount'), 10);
+                if (!isNaN(rawAmount)) {
+                    const formattedAmount = formatCoins(rawAmount);
+                    element.innerHTML = `${formattedAmount} friends`;
+                } else {
+                    element.innerHTML = 'N/A friends';
+                }
+            });
+
+            document.querySelectorAll('.user_info_points').forEach(function(element) {
+                const rawAmount = parseInt(element.getAttribute('data-amount'), 10);
+                if (!isNaN(rawAmount)) {
+                    const formattedAmount = formatCoins(rawAmount);
+                    element.innerHTML = `+${formattedAmount} RandomCoins`;
+                } else {
+                    element.innerHTML = '+N/A RandomCoins';
+                }
+            });
+
+            // Modal functionality
+            const inviteButton = document.getElementById('inviteButton');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const inviteModal = document.getElementById('inviteModal');
+            const closeModal = document.getElementById('closeModal');
+
+            inviteButton.addEventListener('click', () => {
+                modalOverlay.classList.add('show');
+                inviteModal.classList.add('show');
+            });
+
+            closeModal.addEventListener('click', () => {
+                inviteModal.classList.remove('show');
+                modalOverlay.classList.remove('show');
+            });
+
+            modalOverlay.addEventListener('click', () => {
+                inviteModal.classList.remove('show');
+                modalOverlay.classList.remove('show');
+            });
+
+            // Copy invite link functionality
+            document.querySelectorAll('.copy-link-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-user-id');
+                    const inviteLink = `https://t.me/randomcoingame_bot?start=${userId}`;
+
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(inviteLink).then(() => {
+                        // Change button text to "Copied!"
+                        this.textContent = 'Copied!';
+                        // Optionally, revert the text after a short delay
+                        setTimeout(() => {
+                            this.textContent = 'Copy invite link';
+                        }, 2000); // Revert text after 2 seconds
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+                });
+            });
+
+            // Share functionality
+            document.getElementById('shareButton').addEventListener('click', function() {
+                const userId = '{{ user.id }}';  // Replace with the dynamic user ID
+                const inviteLink = `https://t.me/randomcoingame_bot?start=${userId}`;
+                const shareData = {
+                    title: 'Join me on this app!',
+                    text: 'Check out this app and join me!',
+                    url: inviteLink
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData)
+                        .then(() => console.log('Successful share'))
+                        .catch((error) => console.log('Error sharing', error));
+                } else {
+                    // Fallback for browsers that do not support the Web Share API
+                    const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(inviteLink)}&text=Check%20out%20this%20app%20and%20join%20me!`;
+                    window.open(shareUrl, '_blank');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

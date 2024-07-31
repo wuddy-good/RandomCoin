@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/leaderboard.css') }}">
+  </head>
+  <body>
+    <div class="content">
+      <div class="ladeboard_banner__block" id="ladeboard_banner__block">
+        <img src="/static/img/labdeboard_banner.jpg" alt="" class="ladeboard_banner__img">
+      </div>
+      <div class="container">
+        <div class="user_place_container">
+          <div class="user_info_container">
+            <img src="{{ user.photo_url }}" alt="avatar" class="user_info_container_avatar">
+            <div class="user_info">
+              <span class="user_info_username">{{ user.username }}</span>
+              <span class="user_info_points" data-amount="{{ user.coins }}">{{ user.coins }} Coins</span>
+            </div>
+          </div>
+
+          <div class="place_container">
+              <span class="place">#{{ user_place_in_leaderboard }}</span>
+          </div>
+        </div>
+
+        <h1 class="total_holders_count" data-amount="{{ holders_count }}">{{ holders_count }} holders</h1>
+
+        <div class="leaderboard">
+          {% for user in leaderboard %}
+            <div class="leaderboard_item">
+              <div class="user_info_container">
+                <img src="{{ user.photo_url }}" alt="avatar" class="user_info_container_avatar">
+                <div class="user_info">
+                  <span class="user_info_username">{{ user.username }}</span>
+                  <span class="user_info_points" data-amount="{{ user.coins }}">{{ user.coins }} Coins</span>
+                </div>
+              </div>
+
+              <div class="place_container">
+                {% if loop.index == 1 %}
+                  <img src="/static/icons/first_place.svg" alt="first place" class="place_icon">
+                {% elif loop.index == 2 %}
+                  <img src="/static/icons/second_place.svg" alt="second place" class="place_icon">
+                {% elif loop.index == 3 %}
+                  <img src="/static/icons/third_place.svg" alt="third place" class="place_icon">
+                {% else %}
+                  <span class="place">#{{ loop.index }}</span>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+      </div>
+    </div>
+    </div>
+    {% include 'components/navbar.html' %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        function formatCoins(amount) {
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        document.querySelectorAll('.user_info_points').forEach(function(element) {
+            const rawAmount = parseInt(element.getAttribute('data-amount'), 10);
+            if (!isNaN(rawAmount)) {
+                const formattedAmount = formatCoins(rawAmount);
+                element.innerHTML = `+${formattedAmount} Coins`;
+            } else {
+                element.innerHTML = '+N/A Coins';
+            }
+        });
+
+        document.querySelectorAll('.total_holders_count').forEach(function(element) {
+            const rawAmount = parseInt(element.getAttribute('data-amount'), 10);
+            if (!isNaN(rawAmount)) {
+                const formattedAmount = formatCoins(rawAmount);
+                element.innerHTML = `${formattedAmount} holders`;
+            } else {
+                element.innerHTML = 'N/A holders';
+            }
+        });
+    });
+    </script>
+  </body>
+</html>
